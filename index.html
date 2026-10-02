@@ -209,6 +209,7 @@
 <script>
 (() => {
   const STORE = 'lovers-side-a-v4';
+  const CHECKLIST_VERSION = '2026-10-02-rental-setup-v1';
   const defaultQuestions = [
     {text:'《음악만세》 이후 각자 가장 크게 달라진 것은 무엇인가요?',target:'전체',block:'공식 인터뷰'},
     {text:'한대음 올해의 음반 수상이나 페스티벌 출연 등 《음악만세》가 받은 반응이 이번 작업에 어떤 영향을 줬나요?',target:'전체',block:'공식 인터뷰'},
@@ -273,11 +274,16 @@
   function load(){
     try{
       const saved=localStorage.getItem(STORE);
-      if(saved) return Object.assign({checked:{},questions:[],notes:''},JSON.parse(saved));
+      if(saved){
+        const parsed=Object.assign({checked:{},questions:[],notes:'',checklistVersion:''},JSON.parse(saved));
+        if(parsed.checklistVersion!==CHECKLIST_VERSION){parsed.checked={};parsed.checklistVersion=CHECKLIST_VERSION}
+        return parsed;
+      }
     }catch(e){}
-    return {checked:{},questions:defaultQuestions.map(q=>({...q})),notes:''};
+    return {checked:{},questions:defaultQuestions.map(q=>({...q})),notes:'',checklistVersion:CHECKLIST_VERSION};
   }
   function save(){ localStorage.setItem(STORE,JSON.stringify(state)); }
+  save();
 
   const checks = document.getElementById('checks');
   checklist.forEach((text,i)=>{
